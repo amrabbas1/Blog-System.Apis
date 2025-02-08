@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BlogSystem.Core.Models
+{
+    public enum Status
+    {
+        Published,
+        Draft,
+        Archived
+    }
+    public class BlogPost
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public string? AuthorId { get; set; }//FK
+        public User Author { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        public Status Status { get; set; } // Published, Draft, Archived
+        public string? CategoryId { get; set; }//FK
+        public Category Category { get; set; }
+
+        public ICollection<Tag> Tags { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+    }
+}
