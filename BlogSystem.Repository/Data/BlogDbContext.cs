@@ -42,6 +42,13 @@ namespace BlogSystem.Repository.Data
                 .HasOne(c => c.Author)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.AuthorId);
+
+            modelBuilder.Entity<User>()
+                        .Property(u => u.Role)
+                        .HasConversion<string>();// Store enum as a string
+            modelBuilder.Entity<BlogPost>()
+                        .Property(b => b.Status)
+                        .HasConversion<string>();
         }
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Category> Categories { get; set; }

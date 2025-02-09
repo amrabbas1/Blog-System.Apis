@@ -17,7 +17,7 @@ namespace BlogSystem.Core.Models
         public User Author { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
-        public Status Status { get; set; } // Published, Draft, Archived
+        public PostStatus Status { get; set; } // Published, Draft, Archived
         public string? CategoryId { get; set; }//FK
         public Category Category { get; set; }
 
