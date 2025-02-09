@@ -1,4 +1,5 @@
 ﻿using BlogSystem.Apis.DTOs;
+using BlogSystem.Apis.Errors;
 using BlogSystem.Core.Models;
 using BlogSystem.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +34,7 @@ namespace BlogSystem.Apis.Controllers
                 UserName = registerDto.UserName,
             };
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            if (!result.Succeeded) return BadRequest(result);
+            if (!result.Succeeded) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
 
             var returnedUser = new UserDto()
             {
@@ -48,11 +49,11 @@ namespace BlogSystem.Apis.Controllers
         public async Task<ActionResult<UserDto>> LogIn(LogInDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user is null) return Unauthorized(StatusCodes.Status401Unauthorized);
+            if (user is null) return Unauthorized(new ApiErrorResponse(StatusCodes.Status401Unauthorized));
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
 
-            if (!result.Succeeded) return Unauthorized(StatusCodes.Status401Unauthorized);
+            if (!result.Succeeded) return Unauthorized(new ApiErrorResponse(StatusCodes.Status401Unauthorized));
 
             return Ok(new UserDto()
             {

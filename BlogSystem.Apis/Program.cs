@@ -1,9 +1,12 @@
+using BlogSystem.Apis.Errors;
+using BlogSystem.Apis.MiddleWares;
 using BlogSystem.Core.Models;
 using BlogSystem.Core.Services.Interfaces;
 using BlogSystem.Repository.Data;
 using BlogSystem.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Store.G04.Repository.Identity;
@@ -23,6 +26,22 @@ namespace BlogSystem.Apis
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (actionContext) =>
+                {
+                    var errors = actionContext.ModelState.Where(P => P.Value.Errors.Count() > 0)
+                                              .SelectMany(P => P.Value.Errors)
+                                              .Select(E => E.ErrorMessage)
+                                              .ToArray();
+
+                    var response = new ApiValidationErrorResponse()
+                    {
+                        Errors = errors
+                    };
+                    return new BadRequestObjectResult(response);
+                };
+            });
 
             builder.Services.AddDbContext<BlogDbContext>(options =>
             {
@@ -57,17 +76,19 @@ namespace BlogSystem.Apis
                 logger.LogError(ex, "There are problems during apply migrations !");
             }
 
+            app.UseMiddleware<ExceptionMiddleWare>();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");//NotFound endpoint handling
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
