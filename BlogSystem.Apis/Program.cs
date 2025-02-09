@@ -1,8 +1,12 @@
 using BlogSystem.Core.Models;
+using BlogSystem.Core.Services.Interfaces;
 using BlogSystem.Repository.Data;
+using BlogSystem.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Store.G04.Repository.Identity;
 
 namespace BlogSystem.Apis
 {
@@ -17,10 +21,19 @@ namespace BlogSystem.Apis
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<ITokenService, TokenService>();
+
             builder.Services.AddDbContext<BlogDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddIdentity<User, IdentityRole>()
+                            .AddEntityFrameworkStores<BlogDbContext>();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                   .AddJwtBearer();// add UserManager , SignInManager , and RoleManager
 
             var app = builder.Build();
 
@@ -34,6 +47,8 @@ namespace BlogSystem.Apis
             {
                 var context = services.GetRequiredService<BlogDbContext>();
                 await context.Database.MigrateAsync();
+                var userManager = services.GetRequiredService<UserManager<User>>();
+                await AdminSeed.SeedUserAsync(userManager);
             }
 
             catch (Exception ex)

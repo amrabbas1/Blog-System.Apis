@@ -8,12 +8,6 @@ using System.Threading.Tasks;
 
 namespace BlogSystem.Core.Models
 {
-    public enum Status
-    {
-        Published,
-        Draft,
-        Archived
-    }
     public class BlogPost
     {
         public string Id { get; set; }

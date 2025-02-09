@@ -8,16 +8,9 @@ using System.Threading.Tasks;
 
 namespace BlogSystem.Core.Models
 {
-    public enum UserRole
-    {
-        Admin,
-        Editor,
-        Reader
-    }
     public class User : IdentityUser
     {
         public UserRole Role { get; set; } // Enum: Admin, Editor, Reader
-
         public ICollection<BlogPost> BlogPosts { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }
