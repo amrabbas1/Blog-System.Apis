@@ -1,4 +1,5 @@
 ﻿using BlogSystem.Core.Repositories.Interfaces;
+using BlogSystem.Core.Specifications;
 using BlogSystem.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -36,6 +37,20 @@ namespace BlogSystem.Repository.Repositories
         public void Delete(TEntity entity)
         {
             _context.Remove(entity);
+        }
+        public async Task<IEnumerable<TEntity>> GetAllWithSpecAsync(ISpecifications<TEntity> spec)
+        {
+            return await ApplySpecifications(spec).ToListAsync();
+        }
+
+        public async Task<TEntity> GetWithSpecAsync(ISpecifications<TEntity> spec)
+        {
+            return await ApplySpecifications(spec).FirstOrDefaultAsync();
+        }
+
+        private IQueryable<TEntity> ApplySpecifications(ISpecifications<TEntity> spec)
+        {
+            return SpecificationsEvaluator<TEntity>.GetQuery(_context.Set<TEntity>(), spec);
         }
     }
 }

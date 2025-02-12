@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlogSystem.Core.Specifications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,9 @@ namespace BlogSystem.Core.Repositories.Interfaces
     public interface IGenericRepository<TEntity>
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<IEnumerable<TEntity>> GetAllWithSpecAsync(ISpecifications<TEntity> spec);
         Task<TEntity> GetAsync(string id);
+        Task<TEntity> GetWithSpecAsync(ISpecifications<TEntity> spec);
         Task AddAsync(TEntity entity);
         void Update(TEntity entity);
         void Delete(TEntity entity);
