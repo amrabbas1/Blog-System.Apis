@@ -10,7 +10,7 @@ namespace BlogSystem.Core.Specifications
 {
     public class BlogPostSpecifications : BaseSpecifications<BlogPost>
     {
-        public BlogPostSpecifications(string id) : base(P => P.Id == id)
+        public BlogPostSpecifications(int id) : base(P => P.Id == id)
         {
             ApplyIncludes();
         }

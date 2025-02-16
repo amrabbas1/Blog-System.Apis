@@ -11,7 +11,7 @@ namespace BlogSystem.Apis.Controllers
     {
         public IActionResult Error(int code)
         {
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Not found EndPoint!"));
+            return NotFound(new ApiErrorResponse(code));
         }
     }
 }

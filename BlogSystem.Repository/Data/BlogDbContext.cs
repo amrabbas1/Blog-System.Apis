@@ -45,10 +45,12 @@ namespace BlogSystem.Repository.Data
 
             modelBuilder.Entity<User>()
                         .Property(u => u.Role)
-                        .HasConversion<string>();// Store enum as a string
+                        .HasConversion(URole => URole.ToString(), URole => (UserRole)Enum.Parse(typeof(UserRole), URole));// Store enum as a string
+
             modelBuilder.Entity<BlogPost>()
                         .Property(b => b.Status)
-                        .HasConversion<string>();
+                        .HasConversion(BStatus => BStatus.ToString(), BStatus => (PostStatus)Enum.Parse(typeof(PostStatus),BStatus));
+
         }
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Category> Categories { get; set; }

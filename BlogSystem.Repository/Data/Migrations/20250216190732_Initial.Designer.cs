@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogSystem.Repository.Data.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20250209205958_Initial")]
+    [Migration("20250216190732_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,11 +27,11 @@ namespace BlogSystem.Repository.Data.Migrations
 
             modelBuilder.Entity("BlogPostTag", b =>
                 {
-                    b.Property<string>("BlogPostsId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("BlogPostsId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("TagsId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
 
                     b.HasKey("BlogPostsId", "TagsId");
 
@@ -42,14 +42,17 @@ namespace BlogSystem.Repository.Data.Migrations
 
             modelBuilder.Entity("BlogSystem.Core.Models.BlogPost", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CategoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -80,8 +83,11 @@ namespace BlogSystem.Repository.Data.Migrations
 
             modelBuilder.Entity("BlogSystem.Core.Models.Category", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -94,8 +100,11 @@ namespace BlogSystem.Repository.Data.Migrations
 
             modelBuilder.Entity("BlogSystem.Core.Models.Comment", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
@@ -107,8 +116,8 @@ namespace BlogSystem.Repository.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PostId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -121,8 +130,11 @@ namespace BlogSystem.Repository.Data.Migrations
 
             modelBuilder.Entity("BlogSystem.Core.Models.Tag", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()

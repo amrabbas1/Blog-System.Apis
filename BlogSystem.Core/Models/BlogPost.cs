@@ -10,18 +10,17 @@ namespace BlogSystem.Core.Models
 {
     public class BlogPost
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public string? AuthorId { get; set; }//FK
-        public User Author { get; set; }
+        public User? Author { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public PostStatus Status { get; set; } // Published, Draft, Archived
-        public string? CategoryId { get; set; }//FK
-        public Category Category { get; set; }
-
-        public ICollection<Tag> Tags { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public int? CategoryId { get; set; }//FK
+        public Category? Category { get; set; }
+        public ICollection<Tag>? Tags { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
     }
 }

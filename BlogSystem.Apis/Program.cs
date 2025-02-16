@@ -1,15 +1,24 @@
+using AutoMapper;
 using BlogSystem.Apis.Errors;
+using BlogSystem.Apis.Mapping;
 using BlogSystem.Apis.MiddleWares;
+using BlogSystem.Core;
 using BlogSystem.Core.Models;
+using BlogSystem.Core.Repositories.Interfaces;
 using BlogSystem.Core.Services.Interfaces;
+using BlogSystem.Repository;
 using BlogSystem.Repository.Data;
+using BlogSystem.Repository.Repositories;
 using BlogSystem.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Store.G04.Repository.Identity;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace BlogSystem.Apis
 {
@@ -26,6 +35,9 @@ namespace BlogSystem.Apis
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfile()));
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = (actionContext) =>
@@ -52,8 +64,25 @@ namespace BlogSystem.Apis
                             .AddEntityFrameworkStores<BlogDbContext>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                   .AddJwtBearer();// add UserManager , SignInManager , and RoleManager
-
+                   .AddJwtBearer(options =>
+                   {
+                       options.TokenValidationParameters = new TokenValidationParameters()
+                       {
+                           ValidateIssuer = true,
+                           ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                           ValidateAudience = true,
+                           ValidAudience = builder.Configuration["Jwt:Audience"],
+                           ValidateLifetime = true,
+                           ValidateIssuerSigningKey = true,
+                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                       };
+                   });// add UserManager , SignInManager , and RoleManager
+            builder.Services.AddControllers()
+                    .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    });
             var app = builder.Build();
 
             using var scope = app.Services.CreateScope();
@@ -75,6 +104,7 @@ namespace BlogSystem.Apis
                 var logger = loggerFactory.CreateLogger<Program>();
                 logger.LogError(ex, "There are problems during apply migrations !");
             }
+
 
             app.UseMiddleware<ExceptionMiddleWare>();
 
