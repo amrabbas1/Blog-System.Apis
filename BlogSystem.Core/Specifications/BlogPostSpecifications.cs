@@ -22,11 +22,15 @@ namespace BlogSystem.Core.Specifications
             &&
             (string.IsNullOrEmpty(blogPostSpec.SearchByTitle) || B.Title.ToLower().Contains(blogPostSpec.SearchByTitle.ToLower()))
             &&
-            (string.IsNullOrEmpty(blogPostSpec.FilterByStatus) || blogPostSpec.FilterByStatus == B.Status.ToString())
+            (string.IsNullOrEmpty(blogPostSpec.FilterByStatus) || B.Status == GetPostStatus(blogPostSpec.FilterByStatus))
 
             )
         {
             ApplyIncludes();
+        }
+        private static PostStatus? GetPostStatus(string status)
+        {
+            return Enum.TryParse<PostStatus>(status, true, out var parsedStatus) ? parsedStatus : null;
         }
         private void ApplyIncludes()
         {

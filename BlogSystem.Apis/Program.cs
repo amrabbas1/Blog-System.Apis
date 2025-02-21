@@ -97,6 +97,7 @@ namespace BlogSystem.Apis
                 await context.Database.MigrateAsync();
                 var userManager = services.GetRequiredService<UserManager<User>>();
                 await AdminSeed.SeedUserAsync(userManager);
+                //await BlogDbContextSeed.SeedAsync(context);
             }
 
             catch (Exception ex)

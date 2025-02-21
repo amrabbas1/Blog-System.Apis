@@ -53,9 +53,5 @@ namespace BlogSystem.Repository.Repositories
         {
             return SpecificationsEvaluator<TEntity>.GetQuery(_context.Set<TEntity>(), spec);
         }
-        //public async Task<TEntity> GetByNameAsync(string username)
-        //{
-        //    return await _context.Set<TEntity>().FirstOrDefault(P => P.);
-        //}
     }
 }
