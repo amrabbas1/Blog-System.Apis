@@ -36,7 +36,8 @@ namespace BlogSystem.Repository.Data
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.BlogPost)
                 .WithMany(bp => bp.Comments)
-                .HasForeignKey(c => c.PostId);
+                .HasForeignKey(c => c.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.Author)

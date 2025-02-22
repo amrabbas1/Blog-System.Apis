@@ -133,13 +133,13 @@ namespace BlogSystem.Apis.Controllers
             return Ok(postDto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> DeletePost(int? id)
+        public async Task<IActionResult> DeletePost(int id)
         {
-            if (id is null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
-
-            var DeletedPost = await _blogPostRepo.GetAsync(id.Value);
+            var DeletedPost = await _blogPostRepo.GetAsync(id);
+            
+            if (DeletedPost is null) return BadRequest(new ApiErrorResponse(400));
 
             _blogPostRepo.Delete(DeletedPost);
 

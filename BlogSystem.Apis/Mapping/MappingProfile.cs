@@ -17,7 +17,11 @@ namespace BlogSystem.Apis.Mapping
              .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName))
              .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
              .ForMember(dest => dest.TagsName, opt => opt.MapFrom(src => src.Tags.Select(t => t.Name)));
+
+            CreateMap<Comment, CommentToReturnDto>()
+           .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
+
         }
-    
+
     }
 }

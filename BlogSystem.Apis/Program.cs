@@ -84,6 +84,7 @@ namespace BlogSystem.Apis
                         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     });
+
             var app = builder.Build();
 
             using var scope = app.Services.CreateScope();

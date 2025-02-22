@@ -12,6 +12,6 @@ namespace BlogSystem.Apis.DTOs
         public PostStatus Status { get; set; }
         public string? CategoryName { get; set; }
         public ICollection<string>? TagsName { get; set; }
-        //public ICollection<CommentDto> Comments { get; set; }
+        public ICollection<CommentToReturnDto> Comments { get; set; }
     }
 }

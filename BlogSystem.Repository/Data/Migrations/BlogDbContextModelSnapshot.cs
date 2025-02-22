@@ -382,7 +382,8 @@ namespace BlogSystem.Repository.Data.Migrations
 
                     b.HasOne("BlogSystem.Core.Models.BlogPost", "BlogPost")
                         .WithMany("Comments")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Author");
 

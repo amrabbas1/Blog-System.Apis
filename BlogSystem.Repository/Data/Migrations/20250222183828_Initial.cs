@@ -259,7 +259,8 @@ namespace BlogSystem.Repository.Data.Migrations
                         name: "FK_Comments_BlogPosts_PostId",
                         column: x => x.PostId,
                         principalTable: "BlogPosts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
