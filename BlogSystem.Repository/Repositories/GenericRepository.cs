@@ -19,6 +19,10 @@ namespace BlogSystem.Repository.Repositories
         {
             _context = context;
         }
+        public GenericRepository()
+        {
+            
+        }
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await _context.Set<TEntity>().ToListAsync();

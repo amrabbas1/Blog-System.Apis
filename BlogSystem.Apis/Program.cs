@@ -35,6 +35,7 @@ namespace BlogSystem.Apis
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfile()));
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

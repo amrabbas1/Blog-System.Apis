@@ -21,19 +21,15 @@ namespace BlogSystem.Apis.Controllers
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly IGenericRepository<BlogPost> _blogPostRepo;
+        private readonly IBlogPostRepository _blogPostRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
-        private readonly BlogDbContext _context;
 
-        public PostsController(IGenericRepository<BlogPost> blogPostRepo, IUnitOfWork unitOfWork, IMapper mapper, UserManager<User> userManager, BlogDbContext context)
+        public PostsController(IBlogPostRepository blogPostRepo, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _blogPostRepo = blogPostRepo;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userManager = userManager;
-            _context = context;
         }
 
         [HttpGet]
@@ -42,7 +38,6 @@ namespace BlogSystem.Apis.Controllers
             var spec = new BlogPostSpecifications(blogPostSpec);
             var posts = await _blogPostRepo.GetAllWithSpecAsync(spec);
             if (posts == null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
-
             var postDtos = _mapper.Map<IEnumerable<BlogPostToReturnDto>>(posts);
 
             return Ok(postDtos);
@@ -69,16 +64,13 @@ namespace BlogSystem.Apis.Controllers
         public async Task<ActionResult<BlogPostToReturnDto>> CreatePost(BlogPostDto model)
         {
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            if (userEmail is null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
-            var author = await _userManager.FindByEmailAsync(userEmail);
+            var author = await _blogPostRepo.GetAuthorByEmailAsync(userEmail);
+            if (author is null) return BadRequest(new ApiErrorResponse(401));
 
-            var category = _context.Set<Category>().FirstOrDefault(c => c.Name == model.CategoryName);
-            if (category == null) return BadRequest("Category not found.");
+            var category = await _blogPostRepo.GetCategoryAsync(model.CategoryName);
+            if (category == null) return NotFound(new ApiErrorResponse(404, "Category not found."));
 
-            List<Tag> tags = new List<Tag>();
-            if (model.TagsName != null && model.TagsName.Any())
-                tags = await _context.Set<Tag>().Where(t => model.TagsName.Contains(t.Name)).ToListAsync();
-
+            List<Tag> tags = await _blogPostRepo.GetTagsAsync(model.TagsName);
 
             var blogPost = new BlogPost
             {
@@ -92,7 +84,6 @@ namespace BlogSystem.Apis.Controllers
                 CategoryId = category.Id,
                 Tags = tags,
             };
-
 
             await _blogPostRepo.AddAsync(blogPost);
             await _unitOfWork.CompleteAsync();
@@ -108,15 +99,13 @@ namespace BlogSystem.Apis.Controllers
             if (model is null || model.Id is null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
 
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            if (userEmail is null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
-            var author = await _userManager.FindByEmailAsync(userEmail);
+            var author = await _blogPostRepo.GetAuthorByEmailAsync(userEmail);
+            if (author is null) return BadRequest(new ApiErrorResponse(401));
 
-            var category = _context.Set<Category>().FirstOrDefault(c => c.Name == model.CategoryName);
-            if (category == null) return BadRequest("Category not found.");
+            var category = await _blogPostRepo.GetCategoryAsync(model.CategoryName);
+            if (category == null) return NotFound(new ApiErrorResponse(404, "Category not found."));
 
-            List<Tag> tags = new List<Tag>();
-            if (model.TagsName != null && model.TagsName.Any())
-                tags = await _context.Set<Tag>().Where(t => model.TagsName.Contains(t.Name)).ToListAsync();
+            List<Tag> tags = await _blogPostRepo.GetTagsAsync(model.TagsName);
 
             var DeletedPost = await _blogPostRepo.GetAsync(model.Id.Value);
             if (DeletedPost is null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
