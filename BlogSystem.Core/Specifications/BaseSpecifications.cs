@@ -11,6 +11,7 @@ namespace BlogSystem.Core.Specifications
     {
         public Expression<Func<TEntity, bool>> Criteria { get; set; } = null;
         public List<Expression<Func<TEntity, object>>> Includes { get; set; } = new List<Expression<Func<TEntity, object>>>();
+        public List<string> ThenIncludes { get; set; } = new();
         public BaseSpecifications(Expression<Func<TEntity, bool>> expression)
         {
             Criteria = expression;

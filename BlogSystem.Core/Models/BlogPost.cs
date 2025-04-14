@@ -20,7 +20,7 @@ namespace BlogSystem.Core.Models
         public PostStatus Status { get; set; } // Published, Draft, Archived
         public int? CategoryId { get; set; }//FK
         public Category? Category { get; set; }
-        public ICollection<Tag>? Tags { get; set; }
+        public ICollection<BlogPostTag>? Tags { get; set; }
         public ICollection<Comment>? Comments { get; set; }
     }
 }

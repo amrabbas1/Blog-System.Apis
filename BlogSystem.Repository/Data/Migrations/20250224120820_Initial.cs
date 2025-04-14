@@ -213,24 +213,24 @@ namespace BlogSystem.Repository.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BlogPostTags",
+                name: "BlogPostTag",
                 columns: table => new
                 {
-                    BlogPostsId = table.Column<int>(type: "int", nullable: false),
-                    TagsId = table.Column<int>(type: "int", nullable: false)
+                    BlogPostId = table.Column<int>(type: "int", nullable: false),
+                    TagId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlogPostTags", x => new { x.BlogPostsId, x.TagsId });
+                    table.PrimaryKey("PK_BlogPostTag", x => new { x.BlogPostId, x.TagId });
                     table.ForeignKey(
-                        name: "FK_BlogPostTags_BlogPosts_BlogPostsId",
-                        column: x => x.BlogPostsId,
+                        name: "FK_BlogPostTag_BlogPosts_BlogPostId",
+                        column: x => x.BlogPostId,
                         principalTable: "BlogPosts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BlogPostTags_Tags_TagsId",
-                        column: x => x.TagsId,
+                        name: "FK_BlogPostTag_Tags_TagId",
+                        column: x => x.TagId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -313,9 +313,9 @@ namespace BlogSystem.Repository.Data.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogPostTags_TagsId",
-                table: "BlogPostTags",
-                column: "TagsId");
+                name: "IX_BlogPostTag_TagId",
+                table: "BlogPostTag",
+                column: "TagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_AuthorId",
@@ -347,7 +347,7 @@ namespace BlogSystem.Repository.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BlogPostTags");
+                name: "BlogPostTag");
 
             migrationBuilder.DropTable(
                 name: "Comments");

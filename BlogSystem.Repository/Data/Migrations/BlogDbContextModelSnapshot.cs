@@ -22,21 +22,6 @@ namespace BlogSystem.Repository.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BlogPostTag", b =>
-                {
-                    b.Property<int>("BlogPostsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BlogPostsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BlogPostTags", (string)null);
-                });
-
             modelBuilder.Entity("BlogSystem.Core.Models.BlogPost", b =>
                 {
                     b.Property<int>("Id")
@@ -76,6 +61,21 @@ namespace BlogSystem.Repository.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("BlogPosts");
+                });
+
+            modelBuilder.Entity("BlogSystem.Core.Models.BlogPostTag", b =>
+                {
+                    b.Property<int>("BlogPostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BlogPostId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("BlogPostTag");
                 });
 
             modelBuilder.Entity("BlogSystem.Core.Models.Category", b =>
@@ -344,21 +344,6 @@ namespace BlogSystem.Repository.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BlogPostTag", b =>
-                {
-                    b.HasOne("BlogSystem.Core.Models.BlogPost", null)
-                        .WithMany()
-                        .HasForeignKey("BlogPostsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlogSystem.Core.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("BlogSystem.Core.Models.BlogPost", b =>
                 {
                     b.HasOne("BlogSystem.Core.Models.User", "Author")
@@ -372,6 +357,25 @@ namespace BlogSystem.Repository.Data.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("BlogSystem.Core.Models.BlogPostTag", b =>
+                {
+                    b.HasOne("BlogSystem.Core.Models.BlogPost", "BlogPost")
+                        .WithMany("Tags")
+                        .HasForeignKey("BlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlogSystem.Core.Models.Tag", "Tag")
+                        .WithMany("BlogPosts")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlogPost");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("BlogSystem.Core.Models.Comment", b =>
@@ -444,9 +448,16 @@ namespace BlogSystem.Repository.Data.Migrations
             modelBuilder.Entity("BlogSystem.Core.Models.BlogPost", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("BlogSystem.Core.Models.Category", b =>
+                {
+                    b.Navigation("BlogPosts");
+                });
+
+            modelBuilder.Entity("BlogSystem.Core.Models.Tag", b =>
                 {
                     b.Navigation("BlogPosts");
                 });

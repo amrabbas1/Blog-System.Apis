@@ -11,12 +11,13 @@ namespace BlogSystem.Apis.Mapping
         {
             CreateMap<BlogPost, BlogPostDto>()
            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-           .ForMember(dest => dest.TagsName, opt => opt.MapFrom(src => src.Tags.Select(t => t.Name)));
+           .ForMember(dest => dest.TagIds, opt => opt.MapFrom(src => src.Tags.Select(t => t.TagId)))
+           .ForMember(dest => dest.TagsName, opt => opt.MapFrom(src => src.Tags.Select(t => t.Tag.Name)));
 
             CreateMap<BlogPost, BlogPostToReturnDto>()
              .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName))
              .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-             .ForMember(dest => dest.TagsName, opt => opt.MapFrom(src => src.Tags.Select(t => t.Name)));
+             .ForMember(dest => dest.TagsName, opt => opt.MapFrom(src => src.Tags.Select(t => t.Tag.Name)));
 
             CreateMap<Comment, CommentToReturnDto>()
            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));

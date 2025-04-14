@@ -19,6 +19,8 @@ namespace BlogSystem.Repository
             }
 
             query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
+            query = spec.ThenIncludes
+                                 .Aggregate(query, (current, include) => current.Include(include)); // For string-based ThenIncludes
 
             return query;
         }

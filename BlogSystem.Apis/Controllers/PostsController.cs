@@ -82,8 +82,14 @@ namespace BlogSystem.Apis.Controllers
                 Status = model.Status,
                 Category = category,
                 CategoryId = category.Id,
-                Tags = tags,
+                Tags = model.TagIds?.Select(tagId => new BlogPostTag { TagId = tagId }).ToList() ?? new List<BlogPostTag>()
             };
+
+            blogPost.Tags = tags.Select(tag => new BlogPostTag
+            {
+                TagId = tag.Id,
+                BlogPostId = blogPost.Id
+            }).ToList();
 
             await _blogPostRepo.AddAsync(blogPost);
             await _unitOfWork.CompleteAsync();
@@ -107,28 +113,41 @@ namespace BlogSystem.Apis.Controllers
 
             List<Tag> tags = await _blogPostRepo.GetTagsAsync(model.TagsName);
 
-            var DeletedPost = await _blogPostRepo.GetAsync(model.Id.Value);
-            if (DeletedPost is null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
+            var spec = new BlogPostSpecifications(model.Id.Value);
 
-            var blogPost = new BlogPost
+            var post = await _blogPostRepo.GetWithSpecAsync(spec);
+            if (post is null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
+
+            post.Title = model.Title;
+            post.Content = model.Content;
+            post.Author = author;
+            post.AuthorId = author.Id;
+            post.UpdatedAt = DateTime.UtcNow;
+            post.Status = model.Status;
+            post.Category = category;
+            post.CategoryId = category.Id;
+            post.Tags = model.TagIds?.Select(tagId => new BlogPostTag { TagId = tagId }).ToList() ?? new List<BlogPostTag>();
+
+            var blogPostTagsRepo = _unitOfWork.Repository<BlogPostTag>();
+            var existingTags = await blogPostTagsRepo.GetAllAsync();
+
+            var postTags = existingTags.Where(t => t.BlogPostId == model.Id.Value);
+
+            foreach (var tag in postTags)
             {
-                Title = model.Title,
-                Content = model.Content,
-                Author = author,
-                AuthorId = author.Id,
-                CreatedAt = DeletedPost.CreatedAt,
-                UpdatedAt = DateTime.UtcNow,
-                Status = model.Status,
-                Category = category,
-                CategoryId = category.Id,
-                Tags = tags,
-            };
+                blogPostTagsRepo.Delete(tag);
+            }
 
-            _blogPostRepo.Delete(DeletedPost);
-            await _blogPostRepo.AddAsync(blogPost);
+            post.Tags = tags.Select(tag => new BlogPostTag
+            {
+                TagId = tag.Id,
+                BlogPostId = post.Id
+            }).ToList();
+
+            _blogPostRepo.Update(post);
             await _unitOfWork.CompleteAsync();
 
-            var postDto = _mapper.Map<BlogPostToReturnDto>(blogPost);
+            var postDto = _mapper.Map<BlogPostToReturnDto>(post);
 
             return Ok(postDto);
         }

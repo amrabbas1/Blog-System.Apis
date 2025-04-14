@@ -28,10 +28,20 @@ namespace BlogSystem.Repository.Data
                 .WithMany(c => c.BlogPosts)
                 .HasForeignKey(bp => bp.CategoryId);
 
-            modelBuilder.Entity<BlogPost>()
-                .HasMany(bp => bp.Tags)
+            modelBuilder.Entity<BlogPostTag>()
+                    .HasKey(bt => new { bt.BlogPostId, bt.TagId });
+
+            modelBuilder.Entity<BlogPostTag>()
+                .HasOne(bt => bt.BlogPost)
+                .WithMany(bp => bp.Tags)
+                .HasForeignKey(bt => bt.BlogPostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BlogPostTag>()
+                .HasOne(bt => bt.Tag)
                 .WithMany(t => t.BlogPosts)
-                .UsingEntity(j => j.ToTable("BlogPostTags"));
+                .HasForeignKey(bt => bt.TagId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.BlogPost)

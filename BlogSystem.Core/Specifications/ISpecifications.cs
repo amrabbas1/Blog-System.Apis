@@ -11,5 +11,6 @@ namespace BlogSystem.Core.Specifications
     {
         public Expression<Func<TEntity, bool>> Criteria { get; set; }
         public List<Expression<Func<TEntity, object>>> Includes { get; set; }
+        List<string> ThenIncludes { get; }
     }
 }

@@ -16,7 +16,7 @@ namespace BlogSystem.Core.Specifications
         }
         public BlogPostSpecifications(BlogPostSpecParams blogPostSpec) : base(
             B =>
-            (string.IsNullOrEmpty(blogPostSpec.SearchByTag) || B.Tags.Any(tag => tag.Name.ToLower().Contains(blogPostSpec.SearchByTag.ToLower())))
+            (string.IsNullOrEmpty(blogPostSpec.SearchByTag) || B.Tags.Any(tag => tag.Tag.Name.ToLower().Contains(blogPostSpec.SearchByTag.ToLower())))
             &&
             (string.IsNullOrEmpty(blogPostSpec.SearchByCategory) || B.Category.Name.ToLower().Contains(blogPostSpec.SearchByCategory.ToLower()))
             &&
@@ -36,7 +36,7 @@ namespace BlogSystem.Core.Specifications
         {
             Includes.Add(P => P.Category);
             Includes.Add(P => P.Author);
-            Includes.Add(P => P.Tags);
+            ThenIncludes.Add("Tags.Tag");
             Includes.Add(P => P.Comments);
         }
     }

@@ -10,5 +10,7 @@ namespace BlogSystem.Apis.DTOs
         public PostStatus Status { get; set; }
         public string? CategoryName { get; set; }
         public ICollection<string>? TagsName { get; set; }
+        public List<int>? TagIds { get; set; }
+
     }
 }
